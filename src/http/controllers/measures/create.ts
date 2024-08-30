@@ -52,7 +52,7 @@ export async function create(request: FastifyRequest, reply: FastifyReply) {
         error_description: 'Leitura do mês já realizada',
       }
 
-      return reply.status(400).send(errorResponse)
+      return reply.status(409).send(errorResponse)
     }
 
     console.error('Unexpected error:', error)

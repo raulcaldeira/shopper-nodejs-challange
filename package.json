@@ -7,7 +7,9 @@
     "dev": "tsx watch src/server.ts",
     "start": "node build/server.js",
     "build": "tsup src --out-dir build",
-    "lint": "eslint src --ext .ts --fix"
+    "lint": "eslint src --ext .ts --fix",
+    "test": "vitest run --dir src/use-cases/tests",
+    "test:watch": "vitest --dir src/use-cases/tests"
   },
   "keywords": [],
   "author": "",
@@ -19,7 +21,8 @@
     "prisma": "5.19.0",
     "tsup": "8.2.4",
     "tsx": "4.19.0",
-    "typescript": "5.5.4"
+    "typescript": "5.5.4",
+    "vitest": "2.0.5"
   },
   "dependencies": {
     "@google/generative-ai": "0.17.1",

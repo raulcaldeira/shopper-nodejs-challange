@@ -39,4 +39,14 @@ export class PrismaMeasuresRepository implements MeasuresRepository {
       },
     })
   }
+
+  async findAllUserMeasures(customer_code: string): Promise<Measures[] | null> {
+    const userMeasures = prisma.measures.findMany({
+      where: {
+        customer_code,
+      },
+    })
+
+    return userMeasures
+  }
 }

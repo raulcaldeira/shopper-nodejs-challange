@@ -47,4 +47,12 @@ export class InMemoryMeasuresRepository implements MeasuresRepository {
       ) || null
     )
   }
+
+  async findAllUserMeasures(customer_code: string): Promise<Measures[] | null> {
+    const userMeasures = this.items.filter(
+      (measure) => measure.customer_code === customer_code,
+    )
+
+    return userMeasures
+  }
 }

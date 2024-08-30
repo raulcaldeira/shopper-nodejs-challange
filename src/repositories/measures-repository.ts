@@ -7,4 +7,5 @@ export interface MeasuresRepository {
     measure_type: 'WATER' | 'GAS',
     measure_datetime: Date,
   ): Promise<Measures | null>
+  findAllUserMeasures(customer_code: string): Promise<Measures[] | null>
 }

@@ -1,6 +1,5 @@
 import { fetchMeasurementFromGemini } from '@/services/gemini/fetchMeasurementFromGemini'
 import { MeasuresRepository } from '../repositories/measures-repository'
-import { validateBase64Image } from '@/utils/validate-base64'
 import { DoubleReportError } from './errors/double-report'
 
 interface CreateMeasureRequest {
@@ -26,9 +25,6 @@ export class CreateMeasureUseCase {
     measure_type,
   }: CreateMeasureRequest): Promise<CreateMeasureResponse> {
     // Validação da imagem base64
-    if (!validateBase64Image(image)) {
-      throw new Error('Invalid base64 image')
-    }
 
     const measureDateTime = measure_datetime // new Date(measure_datetime)
 

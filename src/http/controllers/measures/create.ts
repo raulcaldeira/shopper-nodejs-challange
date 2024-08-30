@@ -1,12 +1,17 @@
 import { DoubleReportError } from '@/use-cases/errors/double-report'
 import { makeCreateMeasureUseCase } from '@/use-cases/factories/make-create-measure'
+import { validateBase64Image } from '@/utils/validate-base64'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
-// import { makeCreateGymUseCase } from '@/use-cases/factories/make-create-gym-use-case'
 
 export async function create(request: FastifyRequest, reply: FastifyReply) {
   const createMeasureBodySchema = z.object({
-    image: z.string().min(1, 'Image is required'),
+    image: z
+      .string()
+      .min(1, 'Image is required')
+      .refine((val) => validateBase64Image(val), {
+        message: 'Invalid base64 image format',
+      }),
     customer_code: z.string().min(1, 'Customer code is required'),
     measure_datetime: z
       .string()
@@ -33,22 +38,23 @@ export async function create(request: FastifyRequest, reply: FastifyReply) {
     return reply.status(200).send(measureData)
   } catch (error) {
     if (error instanceof z.ZodError) {
-      // Formata a resposta para erros de validação
       const errorResponse = {
         error_code: 'INVALID_DATA',
         error_description: error.errors.map((err) => err.message).join(', '),
       }
+
       return reply.status(400).send(errorResponse)
     }
 
     if (error instanceof DoubleReportError) {
-      return reply.status(400).send({
+      const errorResponse = {
         error_code: 'DOUBLE_REPORT',
         error_description: 'Leitura do mês já realizada',
-      })
+      }
+
+      return reply.status(400).send(errorResponse)
     }
 
-    // Em caso de outros erros inesperados
     console.error('Unexpected error:', error)
     const errorResponse = {
       error_code: 'INTERNAL_ERROR',

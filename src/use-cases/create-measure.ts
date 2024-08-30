@@ -1,6 +1,7 @@
 import { fetchMeasurementFromGemini } from '@/services/gemini/fetchMeasurementFromGemini'
 import { MeasuresRepository } from '../repositories/measures-repository'
 import { validateBase64Image } from '@/utils/validate-base64'
+import { DoubleReportError } from './errors/double-report'
 
 interface CreateMeasureRequest {
   image: string
@@ -40,9 +41,7 @@ export class CreateMeasureUseCase {
       )
 
     if (existingMeasure) {
-      throw new Error(
-        'A measurement for this type already exists for the month',
-      )
+      throw new DoubleReportError()
     }
 
     // Integrar com o Google Gemini para obter a medida

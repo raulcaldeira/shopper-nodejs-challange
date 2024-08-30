@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "measures" ALTER COLUMN "recognized_value" SET DATA TYPE DOUBLE PRECISION,
+ALTER COLUMN "confirmed_value" SET DATA TYPE DOUBLE PRECISION;

@@ -23,8 +23,8 @@ model Measures {
   customer_code    String
   measure_type     MeasureType
   image_url        String
-  recognized_value Int
-  confirmed_value  Int
+  recognized_value Float
+  confirmed_value  Float?
   created_at       DateTime    @default(now())
 
   @@map("measures")

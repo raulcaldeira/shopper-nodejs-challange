@@ -59,19 +59,26 @@ export async function fetchMeasurementFromGemini(
 
   const generatedText = result.response.text()
 
-  // View the response.
   console.log(generatedText)
 
   fs.unlinkSync(filePath)
 
-  const matchResult = generatedText.match(/\d+(\.\d+)?/)
-  const measureValue = matchResult ? parseFloat(matchResult[0]) : NaN
+  const matchResult = generatedText.match(/\d+\.?\d*/)
 
-  console.log(measureValue)
+  const extractedNumber = matchResult ? matchResult[0] : null
+  const recognized_value =
+    extractedNumber && parseInt(extractedNumber.replace('.', ''))
+
+  console.log('Aqui está o resultado:')
+  console.log(recognized_value)
+
+  if (!recognized_value) {
+    throw new Error('The recognized value is not a valid number.')
+  }
 
   const responseData = {
     image_url: uploadResponse.file.uri,
-    measure_value: measureValue,
+    measure_value: recognized_value, // measureValue,
   }
 
   return responseData

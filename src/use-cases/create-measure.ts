@@ -24,9 +24,7 @@ export class CreateMeasureUseCase {
     measure_datetime,
     measure_type,
   }: CreateMeasureRequest): Promise<CreateMeasureResponse> {
-    // Validação da imagem base64
-
-    const measureDateTime = measure_datetime // new Date(measure_datetime)
+    const measureDateTime = measure_datetime
 
     // Verificar se já existe uma leitura no mês para o tipo de medição
     const existingMeasure =

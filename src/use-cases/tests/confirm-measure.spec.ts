@@ -1,4 +1,4 @@
-import { describe, it, beforeEach, expect, vi, afterEach } from 'vitest'
+import { describe, it, beforeEach, expect } from 'vitest'
 import { InMemoryMeasuresRepository } from '@/repositories/in-memory/in-memory-measures-repository'
 import { ConfirmMeasureUseCase } from '../confirm-measure'
 import { MeasureAlreadyConfirmedError } from '../errors/measure-already-confirmed'
@@ -11,10 +11,6 @@ describe('CreateMeasureUseCase', () => {
   beforeEach(() => {
     measuresRepository = new InMemoryMeasuresRepository()
     sut = new ConfirmMeasureUseCase(measuresRepository)
-  })
-
-  afterEach(() => {
-    vi.resetAllMocks()
   })
 
   // Inserir valor igual

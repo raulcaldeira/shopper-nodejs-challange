@@ -1,5 +1,8 @@
 import { Measures, Prisma } from '@prisma/client'
-import { MeasuresRepository } from '../measures-repository'
+import {
+  findByCustomerCodeResponse,
+  MeasuresRepository,
+} from '../measures-repository'
 import { prisma } from '@/lib/prisma'
 
 export class PrismaMeasuresRepository implements MeasuresRepository {
@@ -13,6 +16,32 @@ export class PrismaMeasuresRepository implements MeasuresRepository {
     const measure = await prisma.measures.findUnique({ where: { id } })
 
     return measure
+  }
+
+  async findByCustomerCode(
+    customer_code: string,
+    measure_type: 'GAS' | 'WATER' | null,
+  ): Promise<findByCustomerCodeResponse[] | null> {
+    const whereConditions: Prisma.MeasuresWhereInput = {
+      customer_code,
+      ...(measure_type ? { measure_type } : {}),
+    }
+
+    const measures = await prisma.measures.findMany({
+      where: whereConditions,
+    })
+
+    if (measures.length === 0) {
+      return null
+    }
+
+    return measures.map((measure) => ({
+      measure_uuid: measure.id,
+      measure_datetime: measure.created_at,
+      measure_type: measure.measure_type,
+      has_confirmed: measure.recognized_value === measure.confirmed_value,
+      image_url: measure.image_url,
+    }))
   }
 
   async findByCustomerCodeAndMonth(

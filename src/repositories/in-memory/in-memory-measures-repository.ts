@@ -1,5 +1,8 @@
 import { Measures, Prisma } from '@prisma/client'
-import { MeasuresRepository } from '../measures-repository'
+import {
+  findByCustomerCodeResponse,
+  MeasuresRepository,
+} from '../measures-repository'
 import { randomUUID } from 'node:crypto'
 
 export class InMemoryMeasuresRepository implements MeasuresRepository {
@@ -23,6 +26,33 @@ export class InMemoryMeasuresRepository implements MeasuresRepository {
 
   async findById(id: string): Promise<Measures | null> {
     return this.items.find((item) => item.id === id) ?? null
+  }
+
+  async findByCustomerCode(
+    customer_code: string,
+    measure_type: 'GAS' | 'WATER' | null,
+  ): Promise<findByCustomerCodeResponse[] | null> {
+    let filteredMeasures = this.items.filter(
+      (measure) => measure.customer_code === customer_code,
+    )
+
+    if (measure_type) {
+      filteredMeasures = filteredMeasures.filter(
+        (measure) => measure.measure_type === measure_type,
+      )
+    }
+
+    if (filteredMeasures.length === 0) {
+      return null
+    }
+
+    return filteredMeasures.map((measure) => ({
+      measure_uuid: measure.id,
+      measure_datetime: measure.created_at,
+      measure_type: measure.measure_type,
+      has_confirmed: measure.recognized_value === measure.confirmed_value,
+      image_url: measure.image_url,
+    }))
   }
 
   async findByCustomerCodeAndMonth(

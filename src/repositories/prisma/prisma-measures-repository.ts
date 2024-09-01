@@ -9,6 +9,12 @@ export class PrismaMeasuresRepository implements MeasuresRepository {
     return createdMeasure
   }
 
+  async findById(id: string): Promise<Measures | null> {
+    const measure = await prisma.measures.findUnique({ where: { id } })
+
+    return measure
+  }
+
   async findByCustomerCodeAndMonth(
     customer_code: string,
     measure_type: 'WATER' | 'GAS',
@@ -48,5 +54,35 @@ export class PrismaMeasuresRepository implements MeasuresRepository {
     })
 
     return userMeasures
+  }
+
+  async measureAlreadyConfirmed(id: string): Promise<boolean> {
+    const measure = await prisma.measures.findUnique({ where: { id } })
+
+    if (measure?.confirmed_value) {
+      return true
+    }
+
+    return false
+  }
+
+  async insertAndValidateMeasureValue(
+    id: string,
+    confirmedValue: number,
+  ): Promise<{ isSameValue: boolean }> {
+    const measure = await prisma.measures.update({
+      where: {
+        id,
+      },
+      data: {
+        confirmed_value: confirmedValue,
+      },
+    })
+
+    if (measure.recognized_value === measure.confirmed_value) {
+      return { isSameValue: true }
+    } else {
+      return { isSameValue: false }
+    }
   }
 }

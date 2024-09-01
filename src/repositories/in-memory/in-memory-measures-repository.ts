@@ -21,6 +21,10 @@ export class InMemoryMeasuresRepository implements MeasuresRepository {
     return measure
   }
 
+  async findById(id: string): Promise<Measures | null> {
+    return this.items.find((item) => item.id === id) ?? null
+  }
+
   async findByCustomerCodeAndMonth(
     customer_code: string,
     measure_type: 'WATER' | 'GAS',
@@ -54,5 +58,32 @@ export class InMemoryMeasuresRepository implements MeasuresRepository {
     )
 
     return userMeasures
+  }
+
+  async measureAlreadyConfirmed(id: string): Promise<boolean> {
+    const measure = this.items.find((item) => item.id === id)
+
+    if (measure?.confirmed_value) {
+      return true
+    }
+
+    return false
+  }
+
+  async insertAndValidateMeasureValue(
+    id: string,
+    confirmedValue: number,
+  ): Promise<{ isSameValue: boolean }> {
+    const measure = this.items.find((item) => item.id === id)
+
+    if (measure) {
+      measure.confirmed_value = confirmedValue
+    }
+
+    if (measure?.recognized_value === measure?.confirmed_value) {
+      return { isSameValue: true }
+    } else {
+      return { isSameValue: false }
+    }
   }
 }

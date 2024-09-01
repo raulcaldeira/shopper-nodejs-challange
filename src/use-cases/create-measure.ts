@@ -24,14 +24,12 @@ export class CreateMeasureUseCase {
     measure_datetime,
     measure_type,
   }: CreateMeasureRequest): Promise<CreateMeasureResponse> {
-    const measureDateTime = measure_datetime
-
     // Verificar se já existe uma leitura no mês para o tipo de medição
     const existingMeasure =
       await this.measuresRepository.findByCustomerCodeAndMonth(
         customer_code,
         measure_type,
-        measureDateTime,
+        measure_datetime,
       )
 
     if (existingMeasure) {

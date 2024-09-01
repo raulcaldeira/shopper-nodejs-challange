@@ -62,19 +62,22 @@ describe('CreateMeasureUseCase', () => {
       measure_value: 123,
     })
 
+    vi.setSystemTime(new Date('2024-08-10T10:00:00Z'))
+
     await measuresRepository.create({
       customer_code: 'CUST12346',
       measure_type: 'WATER',
       image_url: 'http://example.com/image.jpg',
       recognized_value: 123,
       confirmed_value: null,
-      created_at: new Date('2024-08-15T10:00:00Z'),
     })
+
+    vi.setSystemTime(new Date('2024-08-15T10:00:00Z'))
 
     await sut.execute({
       image: base64Image,
       customer_code: 'CUST12346',
-      measure_datetime: new Date('2024-08-15T10:00:00Z'),
+      measure_datetime: new Date(),
       measure_type: 'GAS',
     })
 
@@ -96,18 +99,22 @@ describe('CreateMeasureUseCase', () => {
       measure_value: 123,
     })
 
+    vi.setSystemTime(new Date('2024-08-10T10:00:00Z'))
+
     await sut.execute({
       image: base64Image,
       customer_code: 'CUST12346',
-      measure_datetime: new Date('2024-08-15T10:00:00Z'),
+      measure_datetime: new Date(),
       measure_type: 'GAS',
     })
+
+    vi.setSystemTime(new Date('2024-08-15T10:00:00Z'))
 
     await expect(() =>
       sut.execute({
         image: base64Image,
         customer_code: 'CUST12346',
-        measure_datetime: new Date('2024-08-20T10:00:00Z'),
+        measure_datetime: new Date(),
         measure_type: 'GAS',
       }),
     ).rejects.toThrow(DoubleReportError)
@@ -118,12 +125,14 @@ describe('CreateMeasureUseCase', () => {
       throw new Error('Invalid base64 string.')
     })
 
+    vi.setSystemTime(new Date('2024-08-15T10:00:00Z'))
+
     // Espera que a exceção seja lançada
     await expect(() =>
       sut.execute({
         image: 'invalid_base64_image',
         customer_code: 'CUST12346',
-        measure_datetime: new Date('2024-08-30T10:00:00Z'),
+        measure_datetime: new Date(),
         measure_type: 'GAS',
       }),
     ).rejects.toThrow('Invalid base64 string.')
